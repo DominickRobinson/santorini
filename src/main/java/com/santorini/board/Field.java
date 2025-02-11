@@ -14,7 +14,7 @@ public class Field {
     }
 
     public boolean isOccupied() {
-        return this.worker != null || this.tower.hasDome();
+        return this.worker != null;
     }
 
     public Position getPosition() {
