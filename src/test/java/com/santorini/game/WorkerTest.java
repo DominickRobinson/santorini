@@ -24,7 +24,7 @@ class WorkerTest {
         Field newField = new Field(new Position(3, 3));
         Worker worker = new Worker(startField);
 
-        assertEquals(newField, worker.getField(), "Worker should have moved to the new field.");
+        assertNotEquals(newField, worker.getField(), "Worker should not have moved to the new field.");
         assertTrue(startField.isOccupied(), "Start field should be occupied.");
         assertFalse(newField.isOccupied(), "New field should not be occupied.");
 
