@@ -17,7 +17,7 @@ public class Tower {
         }
     }
 
-    public int getLevels() {
+    public int getHeight() {
         return this.levels;
     }
 

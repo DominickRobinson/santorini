@@ -22,7 +22,7 @@ public class Field {
     }
 
     public int getTowerHeight() {
-        return this.tower.getLevels();
+        return this.tower.getHeight();
     }
 
     public Position getPosition() {
@@ -50,7 +50,7 @@ public class Field {
     }
 
     public boolean isWinningField(int winningHeight) {
-        return this.tower.getLevels() == winningHeight;
+        return this.tower.getHeight() == winningHeight;
     }
 
 

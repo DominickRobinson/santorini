@@ -12,15 +12,15 @@ class TowerTest {
     @Test
     public void testBuildIncrementsLevel() {
         Tower tower = new Tower();
-        assertEquals(0, tower.getLevels(), "A new tower should start at level 1");
+        assertEquals(0, tower.getHeight(), "A new tower should start at level 1");
 
         tower.build();
         tower.build();
-        assertEquals(2, tower.getLevels(), "Building once should increase the level to 2");
+        assertEquals(2, tower.getHeight(), "Building once should increase the level to 2");
 
         tower.build();
         tower.build();
-        assertEquals(4, tower.getLevels(), "Building three times should increase the level to 4 (dome)");
+        assertEquals(4, tower.getHeight(), "Building three times should increase the level to 4 (dome)");
 
         assertThrows(IllegalStateException.class, () -> tower.build(), "Building beyond level 4 should throw an exception.");
     }
