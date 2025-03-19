@@ -1,7 +1,6 @@
 package com.santorini.game;
 
 import com.santorini.board.Field;
-import java.util.List;
 
 public class Worker {
     private Field field;
@@ -22,6 +21,10 @@ public class Worker {
     }
 
     public void buildAt(Field field) {
-        field.getTower().build();
+        field.buildTower();
+    }
+
+    public boolean isOnWinningField(int winningHeight) {
+        return this.field.isWinningField(winningHeight);
     }
 }

@@ -1,15 +1,14 @@
 package com.santorini.game;
 
 import com.santorini.board.Field;
-import com.santorini.board.Grid;
 import com.santorini.board.Position;
-import com.santorini.board.Tower;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class GameTest {
 
@@ -59,8 +58,8 @@ class GameTest {
         Worker worker = player1.getWorkers().get(0);
         player1.build(worker, field2);
 
-        assertEquals(1, field2.getTower().getLevels(), "Building should increase tower level.");
-        assertFalse(game.getValidBuildFields(field1).contains(field1), "Cannot build on occupied field.");
+        assertEquals(1, field2.getTowerHeight(), "Building should increase tower level.");
+        assertFalse(game.isValidBuild(worker, field1), "Cannot build on an occupied field.");
     }
 
     @Test
@@ -78,30 +77,28 @@ class GameTest {
     @Test
     public void testMoveAndWinCondition() {
         Worker worker = player1.getWorkers().get(0);
-        Tower tower1 = field1.getTower();
-        Tower tower2 = field2.getTower();
     
-        tower2.build();
-        tower2.build();
+        field2.buildTower();
+        field2.buildTower();
 
-        assertFalse(game.getValidMoveFields(field1).contains(field2), "Should not be able to move up two levels.");
+        assertFalse(game.isValidMove(worker, field2), "Should not be able to move up two levels");
 
         player1.move(worker, field2);
 
-        assertTrue(game.getValidMoveFields(field2).contains(field1), "Should be able to move down two levels.");
+        assertTrue(game.isValidMove(worker, field1), "Should be able to move down two levels");
 
         player1.move(worker, field1);
 
         assertFalse(game.checkWinCondition(worker), "Worker should not win when moving onto a level 2 tower.");
 
-        tower2.build();
+        field2.buildTower();
 
-        assertFalse(game.getValidMoveFields(field1).contains(field2), "Should not be able to move up three levels.");
+        assertFalse(game.isValidMove(worker, field2), "Should not be able to move up three levels");
         
         player1.move(worker, field2);
 
         System.out.println("\nAfter move:");
-        System.out.println("Worker's New Field Tower Height: " + worker.getField().getTower().getLevels());
+        System.out.println("Worker's New Field Tower Height: " + worker.getField().getTowerHeight());
 
         assertTrue(game.checkWinCondition(worker), "Worker should win when moving onto a level 3 tower.");
         game.endGame(player1);

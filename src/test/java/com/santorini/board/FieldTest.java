@@ -3,8 +3,13 @@ package com.santorini.board;
 import com.santorini.game.Worker;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+// CHECKSTYLE:OFF MagicNumber
 class FieldTest {
 
     @Test
@@ -13,7 +18,6 @@ class FieldTest {
         Field field = new Field(position);
 
         assertEquals(position, field.getPosition(), "Field should store the correct position.");
-        assertNotNull(field.getTower(), "Field should initialize with a new Tower.");
         assertNull(field.getWorker(), "Field should start with no worker.");
         assertFalse(field.isOccupied(), "A new field should not be occupied.");
     }
@@ -27,24 +31,28 @@ class FieldTest {
         assertEquals(worker, field.getWorker(), "Field should store the assigned worker.");
         assertTrue(field.isOccupied(), "Field should be occupied after assigning a worker.");
     }
-
+    
     @Test
     public void testAssignWorkerToOccupiedFieldThrowsException() {
-        Field field = new Field(new Position(3, 3));
-        Worker worker1 = new Worker(field);
+        Position position1 = new Position(3, 3);
+        Field field1 = new Field(position1);
+        new Worker(field1);
     
-        Worker worker2 = new Worker(new Field(new Position(4, 4)));
+        Position position2 = new Position(4, 4);
+        Field field2 = new Field(position2);
+        Worker worker2 = new Worker(field2);
     
         assertThrows(IllegalStateException.class, 
-            () -> field.assignWorker(worker2), 
+            () -> field1.assignWorker(worker2), 
             "Should not be able to assign a worker to an occupied field.");
     }
     
+    
     @Test
     public void testRemoveWorker() {
-        Position position = new Position(4, 4);
+        Position position = new Position(3, 3);
         Field field = new Field(position);
-        Worker worker = new Worker(field);
+        new Worker(field);
 
         assertTrue(field.isOccupied(), "Field should be occupied after assigning a worker.");
         field.removeWorker();

@@ -1,8 +1,9 @@
 package com.santorini.board;
 
-import java.util.Objects;
-
 public class Position {
+    private static final int HASH1 = 17;
+    private static final int HASH2 = 31;
+
     private int x;
     private int y;
 
@@ -19,6 +20,7 @@ public class Position {
         return this.y;
     }
 
+    @Override
     public boolean equals(Object object) {
         if (object instanceof Position) {
             Position position = (Position) object;
@@ -27,11 +29,11 @@ public class Position {
         return false;
     }
 
+    @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + x;
-        result = 31 * result + y;
+        int result = HASH1;
+        result = HASH2 * result + x;
+        result = HASH2 * result + y;
         return result;
     }
-
 }

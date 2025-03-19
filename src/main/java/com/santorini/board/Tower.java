@@ -10,7 +10,7 @@ public class Tower {
     }
 
     public void build () {
-        if (this.levels < this.MAX_LEVELS) {
+        if (this.levels < MAX_LEVELS) {
             this.levels++;
         } else {
             throw new IllegalStateException("Cannot build when a tower already has a dome!");
@@ -22,7 +22,7 @@ public class Tower {
     }
 
     public boolean hasDome() {
-        return this.levels == this.MAX_LEVELS;
+        return this.levels == MAX_LEVELS;
     }
 
 }

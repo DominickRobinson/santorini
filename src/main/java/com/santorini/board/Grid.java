@@ -13,8 +13,8 @@ public class Grid {
     public Grid() {
         this.fields = new ArrayList<>();
 
-        for (int x = 0; x < this.WIDTH; x++) {
-            for (int y = 0; y < this.HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
                 this.fields.add(new Field(new Position(x, y)));
             }
         }

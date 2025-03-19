@@ -2,11 +2,15 @@ package com.santorini.game;
 
 import com.santorini.board.Field;
 import com.santorini.board.Position;
-import com.santorini.board.Tower;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+// CHECKSTYLE:OFF MagicNumber
 class WorkerTest {
 
     @Test
@@ -39,12 +43,11 @@ class WorkerTest {
     public void testWorkerBuildAtField() {
         Field field = new Field(new Position(2, 2));
         Worker worker = new Worker(field);
-        Tower tower = field.getTower();
 
-        int initialLevel = tower.getLevels();
+        int initialLevel = field.getTowerHeight();
         worker.buildAt(field);
         
-        assertEquals(initialLevel + 1, tower.getLevels(), "Building should increase the tower level by 1.");
+        assertEquals(initialLevel + 1, field.getTowerHeight(), "Building should increase the tower level by 1.");
     }
 
     @Test
@@ -53,7 +56,7 @@ class WorkerTest {
         Field field2 = new Field(new Position(2, 2));
 
         Worker worker1 = new Worker(field1);
-        Worker worker2 = new Worker(field2);
+        new Worker(field2);
 
         assertThrows(IllegalStateException.class, () -> worker1.moveTo(field2), 
             "Worker should not be able to move to an occupied field.");

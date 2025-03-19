@@ -2,13 +2,13 @@ package com.santorini.game;
 
 import com.santorini.board.Field;
 import com.santorini.board.Position;
-import com.santorini.board.Tower;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PlayerTest {
 
@@ -62,11 +62,10 @@ class PlayerTest {
     public void testBuildValid() {
         player.spawnWorker(field1);
         Worker worker = player.getWorkers().get(0);
-        Tower tower = field2.getTower();
 
-        int initialLevel = tower.getLevels();
+        int initialLevel = field2.getTowerHeight();
         player.build(worker, field2);
 
-        assertEquals(initialLevel + 1, tower.getLevels(), "Building should increase the tower level by 1.");
+        assertEquals(initialLevel + 1, field2.getTowerHeight(), "Building should increase the tower level by 1.");
     }
 }

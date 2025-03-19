@@ -17,12 +17,20 @@ public class Field {
         return this.worker != null;
     }
 
+    public boolean hasDome() {
+        return this.tower.hasDome();
+    }
+
+    public int getTowerHeight() {
+        return this.tower.getLevels();
+    }
+
     public Position getPosition() {
         return this.position;
     }
 
-    public Tower getTower() {
-        return this.tower;
+    public void buildTower() {
+        this.tower.build();
     }
 
     public Worker getWorker() {
@@ -40,5 +48,11 @@ public class Field {
     public void removeWorker() {
         this.worker = null;
     }
+
+    public boolean isWinningField(int winningHeight) {
+        return this.tower.getLevels() == winningHeight;
+    }
+
+
 
 }
