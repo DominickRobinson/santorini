@@ -1,29 +1,2 @@
-# Ignore Maven target folder (compiled files, classes, and build artifacts)
 target/
-
-# Ignore all compiled Java class files
-*.class
-
-# Ignore logs and temporary files
-*.log
-*.tmp
-*.swp
-
-# Ignore IntelliJ and Eclipse project files
-.idea/
-*.iml
-*.ipr
-*.iws
-.project
-.classpath
-.settings/
-
-# Ignore VS Code settings
 .vscode/
-
-# Ignore OS-specific files
-.DS_Store
-Thumbs.db
-
-# Ignore dependency caches
-.mvn/
