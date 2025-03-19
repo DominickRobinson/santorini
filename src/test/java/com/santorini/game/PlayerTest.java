@@ -64,7 +64,7 @@ class PlayerTest {
         Worker worker = player.getWorkers().get(0);
 
         int initialLevel = field2.getTowerHeight();
-        player.build(worker, field2);
+        player.buildAt(worker, field2);
 
         assertEquals(initialLevel + 1, field2.getTowerHeight(), "Building should increase the tower level by 1.");
     }

@@ -56,7 +56,7 @@ class GameTest {
     @Test
     public void testWorkerBuild() {
         Worker worker = player1.getWorkers().get(0);
-        player1.build(worker, field2);
+        player1.buildAt(worker, field2);
 
         assertEquals(1, field2.getTowerHeight(), "Building should increase tower level.");
         assertFalse(game.isValidBuild(worker, field1), "Cannot build on an occupied field.");

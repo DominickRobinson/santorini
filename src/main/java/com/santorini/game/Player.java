@@ -48,7 +48,7 @@ public class Player {
         worker.moveTo(to);
     }
 
-    public void build(Worker worker, Field at) {
+    public void buildAt(Worker worker, Field at) {
         if (!this.workers.contains(worker)) {
             throw new IllegalArgumentException("Player cannot build with a worker that is not their own!");
         }
