@@ -55,8 +55,4 @@ public class Player {
         worker.buildAt(at);
     }
     
-    public int getTotalWorkers() {
-        return workers.size();
-    }
-
 }
