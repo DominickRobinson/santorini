@@ -14,14 +14,14 @@ public class Worker {
         return this.field;
     }
 
-    public void moveTo(Field newField) {
+    public void moveTo(Field to) {
         this.field.removeWorker();
-        this.field = newField;
+        this.field = to;
         this.field.assignWorker(this);
     }
 
-    public void buildAt(Field field) {
-        field.buildTower();
+    public void buildAt(Field at) {
+        at.buildTower();
     }
 
     public boolean isOnWinningField(int winningHeight) {
