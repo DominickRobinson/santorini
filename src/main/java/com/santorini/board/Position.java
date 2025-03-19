@@ -3,6 +3,7 @@ package com.santorini.board;
 public class Position {
     private static final int HASH1 = 17;
     private static final int HASH2 = 31;
+    private static final int HASH3 = 33;
 
     private int x;
     private int y;
@@ -33,7 +34,7 @@ public class Position {
     public int hashCode() {
         int result = HASH1;
         result = HASH2 * result + x;
-        result = HASH2 * result + y;
+        result = HASH3 * result + y;
         return result;
     }
 }
