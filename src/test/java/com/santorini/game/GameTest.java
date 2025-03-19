@@ -83,11 +83,11 @@ class GameTest {
 
         assertFalse(game.isValidMove(worker, field2), "Should not be able to move up two levels");
 
-        player1.move(worker, field2);
+        player1.moveTo(worker, field2);
 
         assertTrue(game.isValidMove(worker, field1), "Should be able to move down two levels");
 
-        player1.move(worker, field1);
+        player1.moveTo(worker, field1);
 
         assertFalse(game.checkWinCondition(worker), "Worker should not win when moving onto a level 2 tower.");
 
@@ -95,7 +95,7 @@ class GameTest {
 
         assertFalse(game.isValidMove(worker, field2), "Should not be able to move up three levels");
         
-        player1.move(worker, field2);
+        player1.moveTo(worker, field2);
 
         System.out.println("\nAfter move:");
         System.out.println("Worker's New Field Tower Height: " + worker.getField().getTowerHeight());

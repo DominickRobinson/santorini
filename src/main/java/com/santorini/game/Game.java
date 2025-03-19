@@ -4,13 +4,10 @@ import com.santorini.board.Grid;
 import com.santorini.board.Field;
 import java.util.Queue;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Game {
     private final Grid grid;
-    private final List<Player> players;
-    private final Queue<Player> turnQueue;
+    private final Queue<Player> playersQueue;
     private Player currentPlayer;
     private boolean gameWon = false;
     private Player winner;
@@ -18,16 +15,14 @@ public class Game {
 
     public Game() {
         this.grid = new Grid();
-        this.players = new ArrayList<>();
-        this.turnQueue = new LinkedList<>();
+        this.playersQueue = new LinkedList<>();
 
         for (int i = 0; i < 2; i++) {
             Player player = new Player(i + 1);
-            players.add(player);
-            turnQueue.add(player);
+            playersQueue.add(player);
         }
 
-        this.currentPlayer = turnQueue.peek();
+        this.currentPlayer = playersQueue.peek();
     }
 
     public Grid getGrid() {
@@ -66,8 +61,8 @@ public class Game {
     }
 
     public void nextTurn() {
-        turnQueue.add(turnQueue.poll());
-        this.currentPlayer = turnQueue.peek();
+        playersQueue.add(playersQueue.poll());
+        this.currentPlayer = playersQueue.peek();
     }
 
     public boolean checkWinCondition(Worker worker) {

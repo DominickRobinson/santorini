@@ -41,7 +41,7 @@ class PlayerTest {
         player.spawnWorker(field1);
         Worker worker = player.getWorkers().get(0);
 
-        player.move(worker, field2);
+        player.moveTo(worker, field2);
 
         assertEquals(field2, worker.getField(), "Worker should be moved to the new field.");
         assertFalse(field1.isOccupied(), "Old field should no longer be occupied.");
@@ -54,7 +54,7 @@ class PlayerTest {
         otherPlayer.spawnWorker(field1);
         Worker worker = otherPlayer.getWorkers().get(0);
 
-        assertThrows(IllegalArgumentException.class, () -> player.move(worker, field2), 
+        assertThrows(IllegalArgumentException.class, () -> player.moveTo(worker, field2), 
             "Should not allow a player to move another player's worker.");
     }
 

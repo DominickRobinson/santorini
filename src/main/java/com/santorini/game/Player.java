@@ -41,7 +41,7 @@ public class Player {
         return workers.get(index);
     }
 
-    public void move(Worker worker, Field to) {
+    public void moveTo(Worker worker, Field to) {
         if (!this.workers.contains(worker)) {
             throw new IllegalArgumentException("Player cannot move a worker that is not their own!");
         }
