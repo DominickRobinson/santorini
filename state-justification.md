@@ -1,41 +1,75 @@
-# Justification for handling state
-Below, describe where you stored each of the following states and justify your answers with design principles/goals/heuristics/patterns. Discuss the alternatives and trade-offs you considered during your design process.
+# Justification for Handling State
 
 ## Players
-The players are stored inside of a list in the Game class. I did this because Game's responsibility is to store information about the game state and handle rules. Players only really exist inside of the context of the game, which is why I put them there.
+**Where it's stored**: Players are stored inside a `Queue` in the `Game` class.
 
-I did not consider any alternatives to this. I don't really know where else you would store the Players.
+**Justification**:  
+- **Encapsulation**: Players only exist within the context of a game, so storing them in `Game` ensures that all player logic is encapsulated within a single source. 
+- **Low Coupling, High Cohesion**: `Game` already manages turn logic, so keeping players inside `Game` prevents unnecessary coupling between `Player` and other classes like `Grid`.  
+- **Information Expert**: The `Game` class is responsible for managing the overall game state, so it the most appropriate place to track all players in my opinion.
 
+**Alternative considered**: I considered letting `Grid` store players, but this violates **Information Expert** and the role of `Grid`, which should not have enough information to track the players (it's `Game`'s responsibility).
 
 ## Current player
-The current player is stored in the Game class. Current player only exists within the context of the game, and because Game tracks the state of the game with respect to the turns and rules, it made sense to track current player in Game.
+**Where it's stored**: The current player is stored in a `Player` attribute inside `Game`.
 
-I did not consider any alternatives to this. I don't really know where else you would track the current player.
+**Justification**:  
+- **Encapsulation**: Because `Game` determines turn order, storing `currentPlayer` here prevents `Player` or any other class from needing to access turn logic.  
+- **Low Coupling**: If `Player` were responsible for storing the current turn, we’d have unnecessary dependencies where each `Player` would need to check the turn order instead of one overseeing `Game` class.  
 
+**Alternative considered**: Instead of explicitly storing `currentPlayer`, I could have computed it dynamically using `players.get(turn % players.size())`. However, I decided to do it with a `Queue` to increase flexibility for possible future mechanics with God cards (such as the ability to skip turns or take multiple consecutive turns).
 
 ## Worker locations
-I gave each worker a Field attribute, where Field represents one tile on the board. I did this because I knew that I eventually needed to check for valid and/or unoccupied adjacent Fields, and so I figured that this information should be accessible from the Field. I also felt that it was the responsibility of Field to track what occupies itself, including any Workers or Towers.
+**Where it's stored**: Each `Worker` stores a reference to a `Field`, and each `Field` stores a reference to the `Worker` occupying it.
 
-I also have Worker track which Field it is on, so that a Player can locate its workers. I am worried that this makes my code highly coupled at this point. I considered having one way relationships (either Field is aware of its occupant Worker while the Worker is unaware of where it is at, or vice versa), but not doing this led to some other coupling elsewhere in my code, so I decided to stick with this.
+**Justification**:  
+- **Information Expert**: The `Worker` is responsible for movement, while `Field` is responsible for tracking occupancy. This division ensures that neither class has excessive responsibility.  
 
+**Alternative considered**: I considered making this a one-way relationship (either only `Worker` tracks `Field` or vice versa), but this seemed impossible because:
+- If only `Field` tracked the `Worker`, `Worker` would have to search through the board to find itself.  
+- If only `Worker` tracked its `Field`, `Board` would have to loop over all tiles to determine which `Fields` are unoccupied and thus possible valid moves.  
 
 ## Towers
-Each tile on the board can have a tower built on it. As a result, I decided to give each tile (referred to as Field in my implementation) a Tower object. Towers only correspond to a tile on the board. Also, I figured that because each worker is aware of the Field it occupies, then a Worker would be able to build upon a Tower by getting the Tower corresponding to its Field.
+**Where it's stored**: Each `Field` has a `Tower` object.
 
-I considered having Tower simply be an int property on Field, but I felt that Tower was a distinct enough concept from Field to make it its own object. Later, once I realized that I needed some other information about Tower, such as whether it has a dome on it, I decided to create the Tower object to DELEGATE that responsibility.
+**Justification**:  
+- **Encapsulation**: Since `Towers` are always (and only ever) built on `Fields`, it makes sense for `Field` to contain the `Tower` rather than keeping a separate structure in `Board` or anywhere else.
+- **High Cohesion**: `Field` is responsible for checking whether it's occupied and what structures exist on it.  
 
+**Alternative considered**: My first design stored **tower height as an `int` inside `Field`**, but this violated **Encapsulation** because `Field` would have to track dome status.
 
 ## Winner
-The winner of the game (if it exists yet) is stored in Game. Game contains information about the rules and turns of the game, and a winner only exists in the context of a game, so it makes sense to put winner there.
+**Where it's stored**: A `Player` reference for `winner` is stored inside `Game`.
 
-I did not consider any alternatives to this. I don't know where else you would track the Winner.
+**Justification**:  
+- **Encapsulation**: The concept of a "winner" is part of the game state, not an attribute for any class not involved in making/enforcing the rules. 
+- **Low Coupling**: If `Player` were responsible for tracking whether they won, there could be unnecessary dependencies.
+
+**Alternative considered**: I could have stored a **boolean `hasWon` in `Player`**, but, as mentioned earlier, increases coupling. 
 
 
 ## Design goals/principles/heuristics considered
-I tried my best to keep coupling low and cohesion high. However, I am worried that I have some instances in my code where there are long chains of getter methods because I was very concerned about high cohesion. The most notable example of this in my code might relate to my Position class, because I felt that I needed a way to identify Fields in the grid without publically revealing that the Fields could be stored in a List of Lists (this was my initial approach, but I changed it later). As a result, there are examples in my code where I do something like "worker.getField().getPosition().getX()" which seems a bit coupled.
+1. **Separation of Concerns**:  
+   - `Game` handles turn logic and victory conditions.  
+   - `Grid` just stores `Field`'s.  
+   - `Player` only manages its own workers.  
 
-I tried my best to consider other design patterns we learned, such as Strategy or Template, but in this barebones version of the game without AI opponents or variations on the game, I did not come across a need for them yet.
+2. **Encapsulation**:  
+   - `Worker` knows its own location.  
+   - `Field` knows its own occupancy (`Tower` and `Worker`).  
+   - `Game` manages turn-based mechanics without exposing how turns work.  
+
+3. **Low Coupling, High Cohesion**:  
+   - **High cohesion**: `Game` only tracks game state, `Grid` only tracks tiles.  
+   - **Low coupling**: `Player` does not need to understand board structure, and `Grid` does not need to track player turns.  
 
 
 ## Alternatives considered and analysis of trade-offs
-My initial design had Dome and Block extend Piece, which compose a Tower. However, once I started implementing this, I realized that the Pieces did not have any properties or methods. I also realized that for Towers with initial heights of 0, 1, or 2, building always entails placing a block, and for a Tower with initial height of 3, building always entails adding a Dome. Based on this, I felt that it was overkill to create all of these objects when I could simply track the number of levels with an int in Tower. I felt that I could easily refactor my code if I eventually need to modify my game and create Piece objects to compose the Towers.
+
+**Tracking `Field` positions in `Grid` vs. `Position` class**  
+- **Alternative**: Instead of storing positions using `Position`, I initially structured `Grid` as a `List`.  
+- **Trade-off**: I did this to increase flexibility for possible future changes in anticipation of God cards. Namely, in case a `Player` can move a `Worker` to a non-adjacent `Field`.
+
+**Representing `Tower` as an `int` instead of a separate class**  
+- **Alternative**: I initially stored tower height as a simple `int` within `Field`.  
+- **Trade-off**: I felt that a dedicated `Tower` class was needed to delegate the responsibilities of tracking both height of tower and whether the tower has a dome.  
