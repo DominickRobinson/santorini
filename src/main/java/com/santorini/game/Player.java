@@ -55,4 +55,7 @@ public class Player {
         worker.buildAt(at);
     }
     
+    public boolean ownsWorker(Worker worker) {
+        return workers.contains(worker);
+    }
 }

@@ -47,17 +47,25 @@ public class Game {
 
     public boolean isValidMove(Worker worker, Field to) {
         Field from = worker.getField();
-        return grid.getAdjacentFields(from).contains(to) &&
-               !to.isOccupied() &&
-               !to.hasDome() &&
-               to.getTowerHeight() - from.getTowerHeight() <= 1;
+        return currentPlayer.ownsWorker(worker) && 
+                grid.getAdjacentFields(from).contains(to) &&
+                !to.isOccupied() &&
+                !to.hasDome() &&
+                to.getTowerHeight() - from.getTowerHeight() <= 1;
     }
 
     public boolean isValidBuild(Worker worker, Field at) {
         Field from = worker.getField();
-        return grid.getAdjacentFields(from).contains(at) &&
-               !at.isOccupied() &&
-               !at.hasDome();
+        return currentPlayer.ownsWorker(worker) && grid.getAdjacentFields(from).contains(at) && !at.isOccupied()
+                && !at.hasDome();
+    }
+    
+    public void move(Worker worker, Field to) {
+        currentPlayer.moveTo(worker, to);
+    }
+
+    public void build(Worker worker, Field at) {
+        currentPlayer.buildAt(worker, at);
     }
 
     public void nextTurn() {
