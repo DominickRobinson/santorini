@@ -39,7 +39,6 @@ public class Grid {
     public int getHeight() {
         return HEIGHT;
     }
-    
 
     /**
      * Checks if a given position is valid within the grid.

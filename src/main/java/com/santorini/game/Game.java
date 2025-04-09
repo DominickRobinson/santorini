@@ -152,6 +152,9 @@ public class Game {
         return null;
     }
     
+    /**
+     * @return The game state in JSON format.
+     */
     public JSONObject toJSON() {
         JSONObject gameJson = new JSONObject();
         gameJson.put("currentPlayer", getCurrentPlayer().getID());
