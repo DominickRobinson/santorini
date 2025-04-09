@@ -1,7 +1,7 @@
 package com.santorini.board;
 
 /**
- * The Tower class represents a tower that can be built on a field in the Santorini game.
+ * The Tower class represents a tower that can be built on a tile in the Santorini game.
  * Towers can have up to a maximum of four levels, with the last level forming a dome.
  */
 public class Tower {

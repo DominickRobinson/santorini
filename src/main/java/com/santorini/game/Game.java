@@ -1,8 +1,8 @@
 package com.santorini.game;
 
-import com.santorini.board.Grid;
+import com.santorini.board.Board;
 import com.santorini.board.Position;
-import com.santorini.board.Field;
+import com.santorini.board.Tile;
 
 import java.util.Queue;
 import java.util.LinkedList;
@@ -13,7 +13,7 @@ import org.json.JSONArray;
  * The Game class manages players, turns, movement, building, and win conditions.
  */
 public class Game {
-    private final Grid grid;
+    private final Board board;
     private final Queue<Player> playersQueue;
     private Player currentPlayer;
     private boolean gameWon = false;
@@ -21,10 +21,10 @@ public class Game {
     private static final int WINNING_HEIGHT = 3;
 
     /**
-     * Initializes a new game with a grid and two players.
+     * Initializes a new game with a board and two players.
      */
     public Game() {
-        this.grid = new Grid();
+        this.board = new Board();
         this.playersQueue = new LinkedList<>();
 
         for (int i = 0; i < 2; i++) {
@@ -36,10 +36,10 @@ public class Game {
     }
 
     /**
-     * @return The game grid.
+     * @return The game board.
      */
-    public Grid getGrid() {
-        return this.grid;
+    public Board getBoard() {
+        return this.board;
     }
 
     /**
@@ -64,24 +64,24 @@ public class Game {
     }
 
     /**
-     * Spawns a worker for the given player on a specific field.
+     * Spawns a worker for the given player on a specific tile.
      * @param player The player to spawn the worker for.
-     * @param field The field where the worker will be placed.
+     * @param tile The tile where the worker will be placed.
      */
-    public void spawnWorker(Player player, Field field) {
-        player.spawnWorker(field);
+    public void spawnWorker(Player player, Tile tile) {
+        player.spawnWorker(tile);
     }
 
     /**
      * Checks if a worker's move is valid based on game rules.
      * @param worker The worker to move.
-     * @param to The destination field.
+     * @param to The destination tile.
      * @return True if the move is valid, otherwise false.
      */
-    public boolean isValidMove(Worker worker, Field to) {
-        Field from = worker.getField();
+    public boolean isValidMove(Worker worker, Tile to) {
+        Tile from = worker.getTile();
         return currentPlayer.ownsWorker(worker) && 
-                grid.getAdjacentFields(from).contains(to) &&
+                board.getAdjacentTiles(from).contains(to) &&
                 !to.isOccupied() &&
                 !to.hasDome() &&
                 to.getTowerHeight() - from.getTowerHeight() <= 1;
@@ -90,30 +90,30 @@ public class Game {
     /**
      * Checks if a worker's build action is valid.
      * @param worker The worker building.
-     * @param at The field to build on.
+     * @param at The tile to build on.
      * @return True if the build action is valid, otherwise false.
      */
-    public boolean isValidBuild(Worker worker, Field at) {
-        Field from = worker.getField();
-        return currentPlayer.ownsWorker(worker) && grid.getAdjacentFields(from).contains(at) && !at.isOccupied()
+    public boolean isValidBuild(Worker worker, Tile at) {
+        Tile from = worker.getTile();
+        return currentPlayer.ownsWorker(worker) && board.getAdjacentTiles(from).contains(at) && !at.isOccupied()
                 && !at.hasDome();
     }
     
     /**
-     * Moves a worker to a new field.
+     * Moves a worker to a new tile.
      * @param worker The worker to move.
-     * @param to The destination field.
+     * @param to The destination tile.
      */
-    public void move(Worker worker, Field to) {
+    public void move(Worker worker, Tile to) {
         currentPlayer.moveTo(worker, to);
     }
 
     /**
-     * Builds a tower at a specified field.
+     * Builds a tower at a specified tile.
      * @param worker The worker building.
-     * @param at The field where the tower is built.
+     * @param at The tile where the tower is built.
      */
-    public void build(Worker worker, Field at) {
+    public void build(Worker worker, Tile at) {
         currentPlayer.buildAt(worker, at);
     }
 
@@ -126,12 +126,12 @@ public class Game {
     }
 
     /**
-     * Checks if the worker is on a winning field (level 3 tower).
+     * Checks if the worker is on a winning tile (level 3 tower).
      * @param worker The worker to check.
      * @return True if the worker reached level 3, otherwise false.
      */
     public boolean checkWinCondition(Worker worker) {
-        return worker.isOnWinningField(WINNING_HEIGHT);
+        return worker.isOnWinningTile(WINNING_HEIGHT);
     }
 
     /**
@@ -159,32 +159,32 @@ public class Game {
         JSONObject gameJson = new JSONObject();
         gameJson.put("currentPlayer", getCurrentPlayer().getID());
 
-        JSONArray gridJson = new JSONArray();
+        JSONArray boardJson = new JSONArray();
 
-        for (int y = 0; y < grid.getHeight(); y++) {
+        for (int y = 0; y < board.getHeight(); y++) {
             JSONArray row = new JSONArray();
-            for (int x = 0; x < grid.getWidth(); x++) {
-                Field field = grid.getFieldAt(new Position(x, y));
-                JSONObject fieldJson = new JSONObject();
-                fieldJson.put("x", x);
-                fieldJson.put("y", y);
-                fieldJson.put("height", field.getTowerHeight());
-                fieldJson.put("hasDome", field.hasDome());
+            for (int x = 0; x < board.getWidth(); x++) {
+                Tile tile = board.getTileAt(new Position(x, y));
+                JSONObject tileJson = new JSONObject();
+                tileJson.put("x", x);
+                tileJson.put("y", y);
+                tileJson.put("height", tile.getTowerHeight());
+                tileJson.put("hasDome", tile.hasDome());
 
-                Worker worker = field.getWorker();
+                Worker worker = tile.getWorker();
                 if (worker != null) {
                     Player owner = getWorkerOwner(worker);
-                    fieldJson.put("worker", owner.getID());
+                    tileJson.put("worker", owner.getID());
                 } else {
-                    fieldJson.put("worker", JSONObject.NULL);
+                    tileJson.put("worker", JSONObject.NULL);
                 }
 
-                row.put(fieldJson);
+                row.put(tileJson);
             }
-            gridJson.put(row);
+            boardJson.put(row);
         }
 
-        gameJson.put("grid", gridJson);
+        gameJson.put("board", boardJson);
         return gameJson;
     }
 }

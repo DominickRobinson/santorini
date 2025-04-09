@@ -1,6 +1,6 @@
 package com.santorini.game;
 
-import com.santorini.board.Field;
+import com.santorini.board.Tile;
 import com.santorini.board.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,9 +15,9 @@ class GameTest {
     private Game game;
     private Player player1;
     private Player player2;
-    private Field field1;
-    private Field field2;
-    private Field field3;
+    private Tile tile1;
+    private Tile tile2;
+    private Tile tile3;
 
     @BeforeEach
     public void setUp() {
@@ -27,39 +27,39 @@ class GameTest {
         player2 = game.getCurrentPlayer();
         game.nextTurn();
 
-        field1 = game.getGrid().getFieldAt(new Position(0, 0));
-        field2 = game.getGrid().getFieldAt(new Position(0, 1));
-        field3 = game.getGrid().getFieldAt(new Position(1, 1));
+        tile1 = game.getBoard().getTileAt(new Position(0, 0));
+        tile2 = game.getBoard().getTileAt(new Position(0, 1));
+        tile3 = game.getBoard().getTileAt(new Position(1, 1));
 
-        game.spawnWorker(player1, field1);
-        game.spawnWorker(player2, field3);
+        game.spawnWorker(player1, tile1);
+        game.spawnWorker(player2, tile3);
     }
 
     @Test
     public void testSpawnWorker() {
         assertEquals(1, player1.getWorkers().size(), "Player should have one worker after spawning.");
         assertEquals(1, player2.getWorkers().size(), "Second player should also have a worker.");
-        assertTrue(field1.isOccupied(), "Player 1's worker should be on field1.");
-        assertTrue(field3.isOccupied(), "Player 2's worker should be on field3.");
+        assertTrue(tile1.isOccupied(), "Player 1's worker should be on tile1.");
+        assertTrue(tile3.isOccupied(), "Player 2's worker should be on tile3.");
     }
 
     @Test
-    public void testWorkerCannotMoveToOccupiedField() {
+    public void testWorkerCannotMoveToOccupiedTile() {
         Worker worker1 = player1.getWorkers().get(0);
         Worker worker2 = player2.getWorkers().get(0);
 
-        assertFalse(game.isValidMove(worker1, field3), "Player 1's worker should not be able to move to Player 2's occupied field.");
-        assertFalse(game.isValidMove(worker1, field1), "Worker cannot stay in same position.");
-        assertFalse(game.isValidMove(worker2, field1), "Player 2's worker should not be able to move to Player 1's occupied field.");
+        assertFalse(game.isValidMove(worker1, tile3), "Player 1's worker should not be able to move to Player 2's occupied tile.");
+        assertFalse(game.isValidMove(worker1, tile1), "Worker cannot stay in same position.");
+        assertFalse(game.isValidMove(worker2, tile1), "Player 2's worker should not be able to move to Player 1's occupied tile.");
     }
 
     @Test
     public void testWorkerBuild() {
         Worker worker = player1.getWorkers().get(0);
-        player1.buildAt(worker, field2);
+        player1.buildAt(worker, tile2);
 
-        assertEquals(1, field2.getTowerHeight(), "Building should increase tower level.");
-        assertFalse(game.isValidBuild(worker, field1), "Cannot build on an occupied field.");
+        assertEquals(1, tile2.getTowerHeight(), "Building should increase tower level.");
+        assertFalse(game.isValidBuild(worker, tile1), "Cannot build on an occupied tile.");
     }
 
     @Test
@@ -78,27 +78,27 @@ class GameTest {
     public void testMoveAndWinCondition() {
         Worker worker = player1.getWorkers().get(0);
     
-        field2.buildTower();
-        field2.buildTower();
+        tile2.buildTower();
+        tile2.buildTower();
 
-        assertFalse(game.isValidMove(worker, field2), "Should not be able to move up two levels");
+        assertFalse(game.isValidMove(worker, tile2), "Should not be able to move up two levels");
 
-        player1.moveTo(worker, field2);
+        player1.moveTo(worker, tile2);
 
-        assertTrue(game.isValidMove(worker, field1), "Should be able to move down two levels");
+        assertTrue(game.isValidMove(worker, tile1), "Should be able to move down two levels");
 
-        player1.moveTo(worker, field1);
+        player1.moveTo(worker, tile1);
 
         assertFalse(game.checkWinCondition(worker), "Worker should not win when moving onto a level 2 tower.");
 
-        field2.buildTower();
+        tile2.buildTower();
 
-        assertFalse(game.isValidMove(worker, field2), "Should not be able to move up three levels");
+        assertFalse(game.isValidMove(worker, tile2), "Should not be able to move up three levels");
         
-        player1.moveTo(worker, field2);
+        player1.moveTo(worker, tile2);
 
         System.out.println("\nAfter move:");
-        System.out.println("Worker's New Field Tower Height: " + worker.getField().getTowerHeight());
+        System.out.println("Worker's New Tile Tower Height: " + worker.getTile().getTowerHeight());
 
         assertTrue(game.checkWinCondition(worker), "Worker should win when moving onto a level 3 tower.");
         game.endGame(player1);
