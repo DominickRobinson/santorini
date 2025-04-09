@@ -1,9 +1,13 @@
 package com.santorini.game;
 
 import com.santorini.board.Grid;
+import com.santorini.board.Position;
 import com.santorini.board.Field;
+
 import java.util.Queue;
 import java.util.LinkedList;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 /**
  * The Game class manages players, turns, movement, building, and win conditions.
@@ -137,5 +141,47 @@ public class Game {
     public void endGame(Player winner) {
         this.gameWon = true;
         this.winner = winner;
+    }
+
+    private Player getWorkerOwner(Worker worker) {
+        for (Player player : playersQueue) {
+            if (player.ownsWorker(worker)) {
+                return player;
+            }
+        }
+        return null;
+    }
+    
+    public JSONObject toJSON() {
+        JSONObject gameJson = new JSONObject();
+        gameJson.put("currentPlayer", getCurrentPlayer().getID());
+
+        JSONArray gridJson = new JSONArray();
+
+        for (int y = 0; y < grid.getHeight(); y++) {
+            JSONArray row = new JSONArray();
+            for (int x = 0; x < grid.getWidth(); x++) {
+                Field field = grid.getFieldAt(new Position(x, y));
+                JSONObject fieldJson = new JSONObject();
+                fieldJson.put("x", x);
+                fieldJson.put("y", y);
+                fieldJson.put("height", field.getTowerHeight());
+                fieldJson.put("hasDome", field.hasDome());
+
+                Worker worker = field.getWorker();
+                if (worker != null) {
+                    Player owner = getWorkerOwner(worker);
+                    fieldJson.put("worker", owner.getID());
+                } else {
+                    fieldJson.put("worker", JSONObject.NULL);
+                }
+
+                row.put(fieldJson);
+            }
+            gridJson.put(row);
+        }
+
+        gameJson.put("grid", gridJson);
+        return gameJson;
     }
 }

@@ -27,6 +27,21 @@ public class Grid {
     }
 
     /**
+     * @return The width of the grid.
+     */
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    /**
+     * @return The height of the grid.
+    */
+    public int getHeight() {
+        return HEIGHT;
+    }
+    
+
+    /**
      * Checks if a given position is valid within the grid.
      * @param position The position to validate.
      * @return True if the position exists in the grid, otherwise false.
