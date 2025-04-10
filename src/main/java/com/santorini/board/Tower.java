@@ -31,7 +31,7 @@ public class Tower {
      * @return The current height of the tower in levels.
      */
     public int getHeight() {
-        return this.levels;
+        return Math.min(this.levels, MAX_LEVELS-1);
     }
 
     /**

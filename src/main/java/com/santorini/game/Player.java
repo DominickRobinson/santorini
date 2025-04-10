@@ -32,7 +32,7 @@ public class Player {
      * Spawns a worker at the specified tile.
      * @param startTile The starting tile for the worker.
      */
-    public void spawnWorker(Tile startTile) {
+    public void spawn(Tile startTile) {
         Worker worker = new Worker(startTile);
         workers.add(worker);
     }
@@ -101,5 +101,12 @@ public class Player {
      */
     public boolean ownsWorker(Worker worker) {
         return workers.contains(worker);
+    }
+
+    /**
+     * @return The number of workers this player owns.
+     */
+    public int getWorkerCount() {
+        return workers.size();
     }
 }
