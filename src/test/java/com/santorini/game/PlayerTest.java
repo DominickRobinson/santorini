@@ -31,14 +31,14 @@ class PlayerTest {
 
     @Test
     public void testSpawnWorker() {
-        player.spawnWorker(tile1);
+        player.spawn(tile1);
         assertEquals(1, player.getWorkers().size(), "Player should have one worker after spawning.");
         assertTrue(tile1.isOccupied(), "Tile should be occupied after spawning a worker.");
     }
 
     @Test
     public void testMoveWorkerValid() {
-        player.spawnWorker(tile1);
+        player.spawn(tile1);
         Worker worker = player.getWorkers().get(0);
 
         player.moveTo(worker, tile2);
@@ -51,7 +51,7 @@ class PlayerTest {
     @Test
     public void testMoveWorkerNotOwned() {
         Player otherPlayer = new Player(2);
-        otherPlayer.spawnWorker(tile1);
+        otherPlayer.spawn(tile1);
         Worker worker = otherPlayer.getWorkers().get(0);
 
         assertThrows(IllegalArgumentException.class, () -> player.moveTo(worker, tile2), 
@@ -60,7 +60,7 @@ class PlayerTest {
 
     @Test
     public void testBuildValid() {
-        player.spawnWorker(tile1);
+        player.spawn(tile1);
         Worker worker = player.getWorkers().get(0);
 
         int initialLevel = tile2.getTowerHeight();
