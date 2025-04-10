@@ -34,6 +34,16 @@
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.nanohttpd</groupId>
+            <artifactId>nanohttpd</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20230618</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -71,6 +81,18 @@
                 <version>3.3.0</version>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.santorini.App</mainClass>
+                    <arguments>
+                    <argument>8080</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,6 +1,6 @@
 package com.santorini.game;
 
-import com.santorini.board.Field;
+import com.santorini.board.Tile;
 import com.santorini.board.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class PlayerTest {
 
     private Player player;
-    private Field field1;
-    private Field field2;
+    private Tile tile1;
+    private Tile tile2;
 
     @BeforeEach
     public void setUp() {
         player = new Player(1);
-        field1 = new Field(new Position(0, 0));
-        field2 = new Field(new Position(1, 1));
+        tile1 = new Tile(new Position(0, 0));
+        tile2 = new Tile(new Position(1, 1));
     }
 
     @Test
@@ -31,41 +31,41 @@ class PlayerTest {
 
     @Test
     public void testSpawnWorker() {
-        player.spawnWorker(field1);
+        player.spawn(tile1);
         assertEquals(1, player.getWorkers().size(), "Player should have one worker after spawning.");
-        assertTrue(field1.isOccupied(), "Field should be occupied after spawning a worker.");
+        assertTrue(tile1.isOccupied(), "Tile should be occupied after spawning a worker.");
     }
 
     @Test
     public void testMoveWorkerValid() {
-        player.spawnWorker(field1);
+        player.spawn(tile1);
         Worker worker = player.getWorkers().get(0);
 
-        player.moveTo(worker, field2);
+        player.moveTo(worker, tile2);
 
-        assertEquals(field2, worker.getField(), "Worker should be moved to the new field.");
-        assertFalse(field1.isOccupied(), "Old field should no longer be occupied.");
-        assertTrue(field2.isOccupied(), "New field should now be occupied.");
+        assertEquals(tile2, worker.getTile(), "Worker should be moved to the new tile.");
+        assertFalse(tile1.isOccupied(), "Old tile should no longer be occupied.");
+        assertTrue(tile2.isOccupied(), "New tile should now be occupied.");
     }
 
     @Test
     public void testMoveWorkerNotOwned() {
         Player otherPlayer = new Player(2);
-        otherPlayer.spawnWorker(field1);
+        otherPlayer.spawn(tile1);
         Worker worker = otherPlayer.getWorkers().get(0);
 
-        assertThrows(IllegalArgumentException.class, () -> player.moveTo(worker, field2), 
+        assertThrows(IllegalArgumentException.class, () -> player.moveTo(worker, tile2), 
             "Should not allow a player to move another player's worker.");
     }
 
     @Test
     public void testBuildValid() {
-        player.spawnWorker(field1);
+        player.spawn(tile1);
         Worker worker = player.getWorkers().get(0);
 
-        int initialLevel = field2.getTowerHeight();
-        player.buildAt(worker, field2);
+        int initialLevel = tile2.getTowerHeight();
+        player.buildAt(worker, tile2);
 
-        assertEquals(initialLevel + 1, field2.getTowerHeight(), "Building should increase the tower level by 1.");
+        assertEquals(initialLevel + 1, tile2.getTowerHeight(), "Building should increase the tower level by 1.");
     }
 }

@@ -1,6 +1,6 @@
 package com.santorini.game;
 
-import com.santorini.board.Field;
+import com.santorini.board.Tile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +29,11 @@ public class Player {
     }
 
     /**
-     * Spawns a worker at the specified field.
-     * @param startField The starting field for the worker.
+     * Spawns a worker at the specified tile.
+     * @param startTile The starting tile for the worker.
      */
-    public void spawnWorker(Field startField) {
-        Worker worker = new Worker(startField);
+    public void spawn(Tile startTile) {
+        Worker worker = new Worker(startTile);
         workers.add(worker);
     }
     
@@ -45,14 +45,14 @@ public class Player {
     }
 
     /**
-     * @return The list of fields occupied by the player's workers.
+     * @return The list of tiles occupied by the player's workers.
      */
-    public List<Field> getOccupiedFields() {
-        List<Field> occupiedFields = new ArrayList<>();
+    public List<Tile> getOccupiedTiles() {
+        List<Tile> occupiedTiles = new ArrayList<>();
         for (Worker worker : workers) {
-            occupiedFields.add(worker.getField());
+            occupiedTiles.add(worker.getTile());
         }
-        return occupiedFields;
+        return occupiedTiles;
     }
 
     /**
@@ -69,12 +69,12 @@ public class Player {
     }
 
     /**
-     * Moves a worker to a specified field.
+     * Moves a worker to a specified tile.
      * @param worker The worker to move.
-     * @param to The destination field.
+     * @param to The destination tile.
      * @throws IllegalArgumentException if the worker is not owned by the player.
      */
-    public void moveTo(Worker worker, Field to) {
+    public void moveTo(Worker worker, Tile to) {
         if (!ownsWorker(worker)) {
             throw new IllegalArgumentException("Player cannot move a worker that is not their own!");
         }
@@ -82,12 +82,12 @@ public class Player {
     }
 
     /**
-     * Builds a tower at a specified field with a worker.
+     * Builds a tower at a specified tile with a worker.
      * @param worker The worker building.
-     * @param at The field where the tower is built.
+     * @param at The tile where the tower is built.
      * @throws IllegalArgumentException if the worker is not owned by the player.
      */
-    public void buildAt(Worker worker, Field at) {
+    public void buildAt(Worker worker, Tile at) {
         if (!ownsWorker(worker)) {
             throw new IllegalArgumentException("Player cannot build with a worker that is not their own!");
         }
@@ -101,5 +101,12 @@ public class Player {
      */
     public boolean ownsWorker(Worker worker) {
         return workers.contains(worker);
+    }
+
+    /**
+     * @return The number of workers this player owns.
+     */
+    public int getWorkerCount() {
+        return workers.size();
     }
 }

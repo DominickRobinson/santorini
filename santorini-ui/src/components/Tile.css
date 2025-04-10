@@ -1,0 +1,47 @@
+.tile {
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.tile.highlight-spawn:hover,
+.tile.highlight-select:hover,
+.tile.highlight-move:hover,
+.tile.highlight-build:hover {
+  filter: brightness(0.9);
+  cursor: pointer;
+}
+
+.tile.level-0 {
+  background-color: #444;
+}
+
+.tile.level-1 {
+  background-color: #777;
+}
+
+.tile.level-2 {
+  background-color: #bbb;
+}
+
+.tile.level-3 {
+  background-color: #eee;
+}
+
+.highlight-spawn {
+  outline: 3px solid #FF9800;
+}
+.highlight-select {
+  outline: 3px solid #ee00ff;
+}
+.highlight-move {
+  outline: 3px solid #2196F3;
+}
+.highlight-build {
+  outline: 3px solid #F44336;
+}
+.highlight-win {
+  outline: 3px solid #4CAF50;
+}

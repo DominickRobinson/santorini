@@ -1,6 +1,6 @@
 package com.santorini.game;
 
-import com.santorini.board.Field;
+import com.santorini.board.Tile;
 import com.santorini.board.Position;
 import org.junit.jupiter.api.Test;
 
@@ -15,50 +15,50 @@ class WorkerTest {
 
     @Test
     public void testWorkerInitialization() {
-        Field startField = new Field(new Position(2, 2));
-        Worker worker = new Worker(startField);
+        Tile startTile = new Tile(new Position(2, 2));
+        Worker worker = new Worker(startTile);
 
-        assertEquals(startField, worker.getField(), "Should be placed at the start field.");
-        assertTrue(startField.isOccupied(), "Start field should be occupied after worker is placed.");
+        assertEquals(startTile, worker.getTile(), "Should be placed at the start tile.");
+        assertTrue(startTile.isOccupied(), "Start tile should be occupied after worker is placed.");
     }
 
     @Test
-    public void testWorkerMoveToNewField() {
-        Field startField = new Field(new Position(2, 2));
-        Field newField = new Field(new Position(3, 3));
-        Worker worker = new Worker(startField);
+    public void testWorkerMoveToNewTile() {
+        Tile startTile = new Tile(new Position(2, 2));
+        Tile newTile = new Tile(new Position(3, 3));
+        Worker worker = new Worker(startTile);
 
-        assertNotEquals(newField, worker.getField(), "Worker should not have moved to the new field.");
-        assertTrue(startField.isOccupied(), "Start field should be occupied.");
-        assertFalse(newField.isOccupied(), "New field should not be occupied.");
+        assertNotEquals(newTile, worker.getTile(), "Worker should not have moved to the new tile.");
+        assertTrue(startTile.isOccupied(), "Start tile should be occupied.");
+        assertFalse(newTile.isOccupied(), "New tile should not be occupied.");
 
-        worker.moveTo(newField);
+        worker.moveTo(newTile);
 
-        assertEquals(newField, worker.getField(), "Worker should have moved to the new field.");
-        assertFalse(startField.isOccupied(), "Start field should no longer be occupied.");
-        assertTrue(newField.isOccupied(), "New field should now be occupied.");
+        assertEquals(newTile, worker.getTile(), "Worker should have moved to the new tile.");
+        assertFalse(startTile.isOccupied(), "Start tile should no longer be occupied.");
+        assertTrue(newTile.isOccupied(), "New tile should now be occupied.");
     }
 
     @Test
-    public void testWorkerBuildAtField() {
-        Field field = new Field(new Position(2, 2));
-        Worker worker = new Worker(field);
+    public void testWorkerBuildAtTile() {
+        Tile tile = new Tile(new Position(2, 2));
+        Worker worker = new Worker(tile);
 
-        int initialLevel = field.getTowerHeight();
-        worker.buildAt(field);
+        int initialLevel = tile.getTowerHeight();
+        worker.buildAt(tile);
         
-        assertEquals(initialLevel + 1, field.getTowerHeight(), "Building should increase the tower level by 1.");
+        assertEquals(initialLevel + 1, tile.getTowerHeight(), "Building should increase the tower level by 1.");
     }
 
     @Test
-    public void testWorkerCannotMoveToOccupiedField() {
-        Field field1 = new Field(new Position(1, 1));
-        Field field2 = new Field(new Position(2, 2));
+    public void testWorkerCannotMoveToOccupiedTile() {
+        Tile tile1 = new Tile(new Position(1, 1));
+        Tile tile2 = new Tile(new Position(2, 2));
 
-        Worker worker1 = new Worker(field1);
-        new Worker(field2);
+        Worker worker1 = new Worker(tile1);
+        new Worker(tile2);
 
-        assertThrows(IllegalStateException.class, () -> worker1.moveTo(field2), 
-            "Worker should not be able to move to an occupied field.");
+        assertThrows(IllegalStateException.class, () -> worker1.moveTo(tile2), 
+            "Worker should not be able to move to an occupied tile.");
     }
 }

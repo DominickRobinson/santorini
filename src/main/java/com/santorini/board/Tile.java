@@ -3,90 +3,90 @@ package com.santorini.board;
 import com.santorini.game.Worker;
 
 /**
- * The Field class represents a single square on the Santorini game board.
+ * The Tile class represents a single square on the Santorini game board.
  * It tracks its position, any worker present, and the height of the tower built on it.
  */
-public class Field {
+public class Tile {
     private Position position;
     private Tower tower;
     private Worker worker;
 
     /**
-     * Initializes a field at a specific position with a new tower.
-     * @param position The position of the field on the game board.
+     * Initializes a tile at a specific position with a new tower.
+     * @param position The position of the tile on the game board.
      */
-    public Field(Position position) {
+    public Tile(Position position) {
         this.position = position;
         this.tower = new Tower();
     }
 
     /**
-     * @return True if a worker is currently occupying this field, otherwise false.
+     * @return True if a worker is currently occupying this tile, otherwise false.
      */
     public boolean isOccupied() {
         return this.worker != null;
     }
 
     /**
-     * @return True if the tower on this field has a dome, otherwise false.
+     * @return True if the tower on this tile has a dome, otherwise false.
      */
     public boolean hasDome() {
         return this.tower.hasDome();
     }
 
     /**
-     * @return The current height of the tower on this field.
+     * @return The current height of the tower on this tile.
      */
     public int getTowerHeight() {
         return this.tower.getHeight();
     }
 
     /**
-     * @return The position of this field on the board.
+     * @return The position of this tile on the board.
      */
     public Position getPosition() {
         return this.position;
     }
 
     /**
-     * Builds an additional level onto the tower at this field.
+     * Builds an additional level onto the tower at this tile.
      */
     public void buildTower() {
         this.tower.build();
     }
 
     /**
-     * @return The worker currently on this field, or null if none is present.
+     * @return The worker currently on this tile, or null if none is present.
      */
     public Worker getWorker() {
         return this.worker;
     }
 
     /**
-     * Assigns a worker to this field, ensuring it is not already occupied.
-     * @param worker The worker to be placed on this field.
-     * @throws IllegalStateException if the field is already occupied by another worker.
+     * Assigns a worker to this tile, ensuring it is not already occupied.
+     * @param worker The worker to be placed on this tile.
+     * @throws IllegalStateException if the tile is already occupied by another worker.
      */
     public void assignWorker(Worker worker) {
         if (this.isOccupied()) {
-            throw new IllegalStateException("Cannot place a worker on an occupied field!");
+            throw new IllegalStateException("Cannot place a worker on an occupied tile!");
         }
         this.worker = worker;
     }
     
     /**
-     * Removes the worker from this field.
+     * Removes the worker from this tile.
      */
     public void removeWorker() {
         this.worker = null;
     }
 
     /**
-     * Checks if this field meets the winning condition based on tower height.
+     * Checks if this tile meets the winning condition based on tower height.
      * @param winningHeight The tower height required for victory.
      * @return True if the tower height matches the winning height, otherwise false.
      */
-    public boolean isWinningField(int winningHeight) {
+    public boolean isWinningTile(int winningHeight) {
         return this.tower.getHeight() == winningHeight;
     }
 }

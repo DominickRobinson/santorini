@@ -19,10 +19,11 @@ class TowerTest {
         assertEquals(2, tower.getHeight(), "Building once should increase the level to 2");
 
         tower.build();
+        assertEquals(3, tower.getHeight(), "Building three times should increase the level to 3 (dome)");
         tower.build();
-        assertEquals(4, tower.getHeight(), "Building three times should increase the level to 4 (dome)");
+        assertEquals(3, tower.getHeight(), "Building four times should add a dome, but keep the total levels at 3");
 
-        assertThrows(IllegalStateException.class, () -> tower.build(), "Building beyond level 4 should throw an exception.");
+        assertThrows(IllegalStateException.class, () -> tower.build(), "Building beyond a dome should throw an exception.");
     }
 
     @Test
