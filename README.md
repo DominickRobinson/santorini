@@ -2,6 +2,17 @@
 
 This is a web-based implementation of the game **Santorini** for CMU 17-214.
 
+## 📦 Getting Started
+
+First, clone this repository:
+
+```bash
+git clone https://github.com/CMU-17-214-Students/s25-hw2-santorini-DominickRobinson.git
+cd s25-hw2-santorini-DominickRobinson
+```
+
+> ✅ You need Java (JDK 8 or later), Node.js (includes npm), and Apache Maven installed. On Windows, make sure `mvn` works in your terminal.
+
 ## 🟢 How to Start
 
 ### 1. Backend (Java)
@@ -16,7 +27,7 @@ Server starts at `http://localhost:8080`.
 
 ### 2. Frontend (React)
 
-From the `frontend` folder:
+From the `santorini-ui` folder:
 
 ```bash
 npm install
@@ -32,7 +43,7 @@ Click the **"How to Play"** button in the top right corner of the game to view t
 ## ✅ Features
 
 - 5x5 grid with tower levels, domes, and workers  
-- Turn cycle: SPAWN → [SELECT → MOVE → BUILD] ↺ → GAME OVER
+- Turn cycle: SPAWN → [SELECT → MOVE → BUILD] ↺ → GAME OVER  
 - Highlights valid tiles  
 - Shows current player and winner  
-- "New Game" button to reset the board  
+- "New Game" button to reset the board
