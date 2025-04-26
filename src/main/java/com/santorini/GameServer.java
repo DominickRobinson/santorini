@@ -3,13 +3,26 @@ package com.santorini;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import org.json.JSONObject;
 
 import com.santorini.board.Position;
 import com.santorini.board.Tile;
 import com.santorini.game.Game;
-import com.santorini.game.Game.Phase;
+import com.santorini.game.Player;
+import com.santorini.godcards.ApolloCard;
+import com.santorini.godcards.ArtemisCard;
+import com.santorini.godcards.AtlasCard;
+import com.santorini.godcards.DemeterCard;
+import com.santorini.godcards.HephaestusCard;
+import com.santorini.godcards.HermesCard;
+import com.santorini.godcards.MinotaurCard;
+import com.santorini.godcards.PanCard;
+import com.santorini.godcards.PrometheusCard;
+import com.santorini.godcards.DefaultLogicCard;
+import com.santorini.godcards.GodCard;
+import com.santorini.serialization.GameSerializer;
 
 import fi.iki.elonen.NanoHTTPD;
 
@@ -41,31 +54,37 @@ public class GameServer extends NanoHTTPD {
             }
 
             if ("/game-state".equals(uri) && Method.GET.equals(method)) {
-                return finishJSONResponse(game.toJSON(), Response.Status.OK);
+                return finishJSONResponse(GameSerializer.toJSON(game), Response.Status.OK);
             }
                          
             if ("/tile-press".equals(uri) && Method.POST.equals(method)) {
 
-                System.out.println(" should press tile...");
-
                 Map<String, String> body = new HashMap<>();
                 session.parseBody(body);
                 String requestBody = body.get("postData");
-
                 JSONObject requestJson = new JSONObject(requestBody);
+
                 int x = requestJson.getInt("x");
                 int y = requestJson.getInt("y");
-
-                System.out.println(" should handle tile press...");
 
                 JSONObject result = handleTilePress(x, y);
 
                 return finishJSONResponse(result, Response.Status.OK);
             }
 
+            if ("/skip".equals(uri) && Method.POST.equals(method)) {
+                game.trySkip();
+                return finishJSONResponse(GameSerializer.toJSON(game), Response.Status.OK);
+            }            
+
             if ("/new-game".equals(uri) && Method.POST.equals(method)) {
-                resetGame();
-                return finishJSONResponse(game.toJSON(), Response.Status.OK);
+                Map<String, String> body = new HashMap<>();
+                session.parseBody(body);
+                String requestBody = body.get("postData");
+                JSONObject requestJson = new JSONObject(requestBody);
+
+                resetGame(requestJson);
+                return finishJSONResponse(GameSerializer.toJSON(game), Response.Status.OK);
             }
 
             JSONObject error = new JSONObject();
@@ -90,56 +109,39 @@ public class GameServer extends NanoHTTPD {
         return res;
     }
 
-    private JSONObject handleTilePress(int x, int y) {
-
+    private JSONObject handleTilePress(int x, int y) throws Exception {
         Tile tile = game.getTileAt(new Position(x, y));
-        Game.Phase phase = game.getPhase();
+        game.handleTilePress(tile);
 
-        System.out.println("handleTilePress()");
-
-        if (phase == Phase.SPAWN) {
-            System.out.print(" SPAWN...");
-            boolean spawned = game.trySpawn(tile);
-            if (spawned)
-                System.out.println("  successful!");
-            else
-                System.out.println("  failed!");
-        } else if (phase == Phase.SELECT) {
-            System.out.print(" SELECT...");
-            boolean selected = game.trySelect(tile);
-            if (selected)
-                System.out.println("  successful!");
-            else
-                System.out.println("  failed!");
-        } else if (phase == Phase.MOVE) {
-            System.out.print(" MOVE...");
-            if (game.getSelectedWorker() != null) {
-                System.out.print(" (player selected) ");
-                boolean moved = game.tryMove(tile);
-                if (moved)
-                    System.out.println("  successful!");
-                else
-                    System.out.println("  failed!");
-            } else {
-                System.out.print(" (no player selected) ");
-                if (game.getCurrentPlayer().ownsWorker(tile.getWorker())) {
-                    game.setSelectedWorker(tile.getWorker());
-                }
-            }
-        } else if (phase == Phase.BUILD) {
-            System.out.print(" BUILD...");
-            boolean built = game.tryBuild(tile);
-            if (built)
-                System.out.println("  successful!");
-            else
-                System.out.println("  failed!");
-        }
-
-        return game.toJSON();
+        return GameSerializer.toJSON(game);
     }
 
-    private void resetGame() {
+    private void resetGame(JSONObject config) {
         this.game = new Game();
+
+        String godCard1 = config.optString("player1GodCard", "none").toLowerCase();
+        String godCard2 = config.optString("player2GodCard", "none").toLowerCase();
+    
+        assignGodCard(game.getPlayer(1), godCard1);
+        assignGodCard(game.getPlayer(2), godCard2);
     }
 
+    private static final Map<String, Supplier<GodCard>> GOD_CARD_MAP = Map.ofEntries(
+        Map.entry("apollo", ApolloCard::new),
+        Map.entry("artemis", ArtemisCard::new),
+        // Map.entry("athena", AthenaCard::new),
+        Map.entry("atlas", AtlasCard::new),
+        Map.entry("demeter", DemeterCard::new),
+        Map.entry("hephaestus", HephaestusCard::new),
+        Map.entry("hermes", HermesCard::new),
+        Map.entry("minotaur", MinotaurCard::new),
+        Map.entry("pan", PanCard::new),
+        Map.entry("prometheus", PrometheusCard::new)
+    );
+
+    private void assignGodCard(Player player, String god) {
+        player.setGodCard(
+            GOD_CARD_MAP.getOrDefault(god.toLowerCase(), DefaultLogicCard::new).get()
+        );
+    }
 }

@@ -84,7 +84,7 @@ public class Board {
 
                 if (dx == 0 && dy == 0) {
                     continue;
-                } 
+                }
 
                 Position adjacentPosition = new Position(position.getX() + dx, position.getY() + dy);
                 if (isValidPosition(adjacentPosition)) {
@@ -95,4 +95,15 @@ public class Board {
 
         return adjacentTiles;
     }
+    
+    /**
+     * Checks whether two tiles are adjacent.
+     * @param a One of the tiles.
+     * @param b One of the tiles.
+     * @return True if a and b are adjacent, otherwise false.
+     */
+    public boolean areAdjacent(Tile a, Tile b) {
+        return getAdjacentTiles(a).contains(b);
+    }
+    
 }
