@@ -1,0 +1,16 @@
+:root {
+    --player1-color: #3498db;
+    --player2-color: #e74c3c;
+  
+    --player1-bg: rgba(52, 152, 219, 0.12);
+    --player2-bg: rgba(231, 76, 60, 0.12);
+  
+    --shared-highlight: repeating-linear-gradient(
+      135deg,
+      var(--player1-color),
+      var(--player1-color) 5px,
+      var(--player2-color) 5px,
+      var(--player2-color) 10px
+    );
+  }
+  

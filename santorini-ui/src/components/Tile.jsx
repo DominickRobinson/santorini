@@ -1,16 +1,15 @@
 import React from "react";
 import './Tile.css';
 
-function Tile({ tile, phase, onClick }) {
+function Tile({ tile, onClick }) {
     const {
         x, y,
         height,
         hasDome,
         worker,
         isValidSpawn,
-        isValidSelect,
-        isValidMove,
-        isValidBuild,
+        isValidAction,
+        hasSelectedWorker,
         isWinningTile
     } = tile;
 
@@ -18,16 +17,15 @@ function Tile({ tile, phase, onClick }) {
 
     const highlightClass =
         isWinningTile ? 'highlight-win' :
+        hasSelectedWorker ? 'highlight-selected-worker' :
         isValidSpawn ? 'highlight-spawn' :
-        isValidSelect ? 'highlight-select' :
-        isValidMove ? 'highlight-move' :
-        isValidBuild ? 'highlight-build' :
+        isValidAction ? 'highlight-action' :
         '';
 
     const workerImage = worker ? (
         <img
             src={`/sprites/worker${worker}.svg`}
-            alt={`Player ${worker}\'s worker`}
+            alt={`Player ${worker}'s worker`}
             className="worker-sprite"
         />
     ) : null;

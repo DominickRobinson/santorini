@@ -1,6 +1,9 @@
 package com.santorini.game;
 
 import com.santorini.board.Tile;
+import com.santorini.godcards.DefaultLogicCard;
+import com.santorini.godcards.GodCard;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +14,7 @@ import java.util.List;
 public class Player {
     private int id;
     private List<Worker> workers;
+    private GodCard godCard = new DefaultLogicCard();
 
     /**
      * Initializes a player with a given ID.
@@ -108,5 +112,20 @@ public class Player {
      */
     public int getWorkerCount() {
         return workers.size();
+    }
+
+    /**
+     * @return The player's god card.
+     */
+    public GodCard getGodCard() {
+        return godCard;
+    }
+
+    /**
+     * Sets the player's god card.
+     * @param newCard The player's new god card.
+     */
+    public void setGodCard(GodCard newCard) {
+        this.godCard = newCard;
     }
 }

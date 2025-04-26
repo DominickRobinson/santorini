@@ -61,4 +61,9 @@ public class Position {
         result = HASH3 * result + y;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 }

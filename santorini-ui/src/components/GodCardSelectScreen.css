@@ -1,0 +1,129 @@
+@import url('./variables.css');
+
+.godcard-select-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2em;
+  font-family: sans-serif;
+}
+
+.turn-indicator {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.turn-indicator.player1 {
+  color: var(--player1-color);
+}
+
+.turn-indicator.player2 {
+  color: var(--player2-color);
+}
+
+.god-card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+  margin-bottom: 2em;
+  max-width: 800px;
+}
+
+.god-card {
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  padding: 1em;
+  width: 120px;
+  text-align: center;
+  background-color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.god-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.god-card img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5em;
+}
+
+.god-card .god-name {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.god-card.selected-p1 {
+  border: 3px solid var(--player1-color);
+  background-color: var(--player1-bg);
+}
+
+.god-card.selected-p2 {
+  border: 3px solid var(--player2-color);
+  background-color: var(--player2-bg);
+}
+
+.god-card.selected-both {
+  border: 3px dashed transparent;
+  background: linear-gradient(
+    to bottom right,
+    var(--player1-bg)
+    var(--player2-bg)
+  );
+  background-origin: border-box;
+  border-image: linear-gradient(
+    to bottom right,
+    var(--player1-color),
+    var(--player2-color)
+  ) 1;
+}
+
+.hint-toggle {
+  margin: 1em;
+  cursor: pointer;
+  background: none;
+  color: #007bff;
+  border: none;
+  font-size: 1rem;
+  text-decoration: underline;
+}
+
+.start-button {
+  margin-top: 1em;
+  padding: 0.6em 1.5em;
+  font-size: 1.2em;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.start-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.godcard-help-panel {
+  max-width: 700px;
+  text-align: left;
+  margin-top: 2em;
+}
+
+.godcard-help-panel ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.godcard-help-panel li {
+  margin-bottom: 0.5em;
+}

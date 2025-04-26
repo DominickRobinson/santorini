@@ -82,11 +82,11 @@ public class Tile {
     }
 
     /**
-     * Checks if this tile meets the winning condition based on tower height.
-     * @param winningHeight The tower height required for victory.
-     * @return True if the tower height matches the winning height, otherwise false.
+     * Checks if this tile has a tower with a given height.
+     * @param height The height to compare to.
+     * @return True if the tower height matches the given height, otherwise false.
      */
-    public boolean isWinningTile(int winningHeight) {
-        return this.tower.getHeight() == winningHeight;
+    public boolean hasTowerWithHeight(int height) {
+        return this.tower.getHeight() == height;
     }
 }

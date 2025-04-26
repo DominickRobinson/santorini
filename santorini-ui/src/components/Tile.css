@@ -7,9 +7,7 @@
 }
 
 .tile.highlight-spawn:hover,
-.tile.highlight-select:hover,
-.tile.highlight-move:hover,
-.tile.highlight-build:hover {
+.tile.highlight-action:hover {
   filter: brightness(0.9);
   cursor: pointer;
 }
@@ -33,15 +31,12 @@
 .highlight-spawn {
   outline: 3px solid #FF9800;
 }
-.highlight-select {
-  outline: 3px solid #ee00ff;
-}
-.highlight-move {
-  outline: 3px solid #2196F3;
-}
-.highlight-build {
-  outline: 3px solid #F44336;
+.highlight-action {
+  outline: 3px solid #ff2600;
 }
 .highlight-win {
   outline: 3px solid #4CAF50;
+}
+.highlight-selected-worker {
+  outline: 3px solid #0044ff;
 }

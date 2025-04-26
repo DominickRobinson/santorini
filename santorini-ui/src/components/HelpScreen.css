@@ -8,7 +8,7 @@
     border-radius: 8px;
     padding: 2rem;
     z-index: 999;
-    max-width: 600px;
+    max-width: 1000px;
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -22,6 +22,12 @@
   .help-panel ul {
     list-style-type: disc;
     margin-left: 1.5rem;
+  }
+
+  .help-panel ul.icons li {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
   }
   
   .highlight-sample {
@@ -48,6 +54,3 @@
     margin-right: 0.5rem;
     vertical-align: middle;
   }
-  
-  
-  

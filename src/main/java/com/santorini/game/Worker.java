@@ -8,6 +8,7 @@ import com.santorini.board.Tile;
  */
 public class Worker {
     private Tile tile;
+    private Tile previousTile;
 
     /**
      * Initializes a worker at a specific tile.
@@ -30,6 +31,7 @@ public class Worker {
      * @param to The destination tile.
      */
     public void moveTo(Tile to) {
+        this.previousTile = this.tile;
         this.tile.removeWorker();
         this.tile = to;
         this.tile.assignWorker(this);
@@ -44,11 +46,36 @@ public class Worker {
     }
 
     /**
-     * Checks if the worker is standing on a winning tile.
-     * @param winningHeight The height that determines victory.
-     * @return True if the worker is on a winning tile, otherwise false.
+     * @return The worker's previously occupied tile.
      */
-    public boolean isOnWinningTile(int winningHeight) {
-        return this.tile.isWinningTile(winningHeight);
+    public Tile getPreviousTile() {
+        return previousTile;
     }
+
+    /**
+     * Checks if the worker is on a tile with a tower of a particular height.
+     * @param height The height to check.
+     * @return True if the occupied tile has a tower with the particular height, otherwise false.
+     */
+    public boolean onTowerWithHeight(int height) {
+        return tile.getTowerHeight() == height;
+    }
+
+    public void swapWith(Worker other) {
+        Tile myTile = this.tile;
+        Tile theirTile = other.tile;
+    
+        myTile.removeWorker();
+        theirTile.removeWorker();
+    
+        myTile.assignWorker(other);
+        theirTile.assignWorker(this);
+    
+        this.tile = theirTile;
+        this.previousTile = myTile;
+    
+        other.tile = myTile;
+        other.previousTile = theirTile;
+    }
+    
 }

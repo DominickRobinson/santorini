@@ -3,11 +3,12 @@ package com.santorini.game;
 import com.santorini.board.Board;
 import com.santorini.board.Position;
 import com.santorini.board.Tile;
+import com.santorini.game.actions.TurnAction;
+import com.santorini.godcards.DefaultLogicCard;
+import com.santorini.godcards.GodCard;
 
 import java.util.Queue;
 import java.util.LinkedList;
-import org.json.JSONObject;
-import org.json.JSONArray;
 
 /**
  * The Game class manages players, turns, movement, building, and win conditions.
@@ -19,12 +20,9 @@ public class Game {
     private boolean gameWon = false;
     private Player winner;
     private static final int WINNING_HEIGHT = 3;
+    private static final int MAX_CLIMB_HEIGHT = 1;
     private static final int WORKERS_PER_PLAYER = 2;
-
-    public enum Phase {
-        SPAWN, SELECT, MOVE, BUILD, GAME_OVER
-    }    
-
+    
     private Phase phase = Phase.SPAWN;
     private Worker selectedWorker = null;
 
@@ -69,22 +67,22 @@ public class Game {
      * @param phase The new phase.
      */
     public void setPhase(Phase phase) {
-        Phase oldPhase = this.phase;
-        this.phase = phase;
-
-        if (phase == Phase.SELECT) {
-            boolean hasMoveableWorker = currentPlayer.getWorkers().stream().anyMatch(worker ->
-            board.getAdjacentTiles(worker.getTile()).stream().anyMatch(t -> isValidMove(worker, t)));
-            
-            if (!hasMoveableWorker) {
-                nextTurn();
-                endGame(currentPlayer);
-            }
-        } else if (oldPhase == Phase.MOVE) {
-            if (this.selectedWorker != null && checkWinCondition(this.selectedWorker)) {
-                endGame(currentPlayer);
-            }
+        if (this.phase == Phase.GAME_OVER && phase == Phase.GAME_OVER) {
+            return; 
         }
+        this.phase = phase;
+    
+        if (phase == Phase.GAME_OVER) {
+            endGame(getCurrentPlayer());
+        }
+    }
+    
+    
+    /**
+     * @return The currently selected worker.
+     */
+    public Worker getSelectedWorker() {
+        return this.selectedWorker;
     }
 
     /**
@@ -93,13 +91,6 @@ public class Game {
      */
     public void setSelectedWorker(Worker w) {
         this.selectedWorker = w;
-    }
-
-    /**
-     * @return The currently selected worker.
-     */
-    public Worker getSelectedWorker() {
-        return this.selectedWorker;
     }
 
     /**
@@ -126,6 +117,31 @@ public class Game {
     }
 
     /**
+     * Checks if the a player can spawn a worker on a tile.
+     * @param player The player that wants to spawn a worker.
+     * @param tile The tile that the worker should be spawned on, if possible.
+     * @return True if the spawn was successful, otherwise false.
+     */
+    public boolean isValidSpawn(Player player, Tile tile) {
+        return !tile.isOccupied() && !tile.hasDome();
+    }
+
+    /**
+     * Spawns a worker for the current player on a specific tile.
+     * @param tile The tile where the worker will be placed.
+     * @return True if the spawn was successful, otherwise false.
+     */
+    public boolean trySpawn(Tile tile) {
+        if (!isValidSpawn(currentPlayer, tile)) return false;
+        currentPlayer.spawn(tile);
+        if (playerHasSpawnedAllWorkers(currentPlayer)) {
+            nextTurn();
+            if (allPlayersHaveSpawned()) setPhase(Phase.TURN_ACTION);
+        }
+        return true;
+    }
+
+    /**
      * Checks if a player has spawned all of their workers.
      * @param p The player you want to check.
      * @return True if the player has spawned all of the workers, otherwise false.
@@ -146,125 +162,68 @@ public class Game {
         return true;
     }
     
-    /**
-     * Checks if the a player can spawn a worker on a tile.
-     * @param player The player that wants to spawn a worker.
-     * @param tile The tile that the worker should be spawned on, if possible.
-     * @return True if the spawn was successful, otherwise false.
-     */
-    public boolean isValidSpawn(Player player, Tile tile) {
-        return !tile.isOccupied() && !tile.hasDome();
-    }
+    public void handleTilePress(Tile tile) {
+        if (phase == Phase.SPAWN) {
+            trySpawn(tile);
+            return;
+        }
 
-    /**
-     * Spawns a worker for the current player on a specific tile.
-     * @param tile The tile where the worker will be placed.
-     * @return True if the spawn was successful, otherwise false.
-     */
-    public boolean trySpawn(Tile tile) {
-        if (!isValidSpawn(currentPlayer, tile))
-            return false;
-        currentPlayer.spawn(tile);
-
-        if (playerHasSpawnedAllWorkers(currentPlayer)) {
-            nextTurn();
-            if (allPlayersHaveSpawned()) {
-                setPhase(Phase.SELECT);
+        if (phase == Phase.TURN_ACTION && !gameWon) {
+            var iterator = getGodCard(currentPlayer).getTurnIterator();
+            var action = iterator.getCurrent();
+            if (action != null && action.attempt(tile, this)) {
+                Player player = getCurrentPlayer();
+                if (player.getGodCard().checkWinCondition(getSelectedWorker(), this)) {
+                    endGame(player);
+                    return;
+                }
+                iterator.advance();
+                if (iterator.isDone()) {
+                    getGodCard(currentPlayer).endTurn(this);
+                    iterator.reset();
+                }
             }
         }
-
-        return true;
+    }
+    
+    public String getCurrentInstruction() {
+        if (getPhase() == Phase.SPAWN) 
+            return "Spawn";
+        if (getPhase() == Phase.TURN_ACTION) 
+            return getCurrentAction().getName();
+        if (getPhase() == Phase.GAME_OVER)
+            return "Game Over";
+        return "";
     }
 
-    /**
-     * Checks if a player can spawn a worker on a tile.
-     * @param player The player that wants to select a worker.
-     * @param tile The tile that will be checked to see if it has a worker can be selected.
-     * @return True if a worker can be selected on the tile, otherwise false.
-     */
-    public boolean isValidSelect(Player player, Tile tile) {
-        Worker worker = tile.getWorker();
+    public boolean canSkip() {
+        var iterator = currentPlayer.getGodCard().getTurnIterator();
+        var action = iterator.getCurrent();
+        if (action != null)
+            return action.isSkippable();
+        return false;
+    }
 
-        if (phase != Phase.SELECT || worker == null || !player.ownsWorker(worker)) {
+    public boolean trySkip() {
+        if (phase != Phase.TURN_ACTION || gameWon)
             return false;
+        var iterator = currentPlayer.getGodCard().getTurnIterator();
+        var action = iterator.getCurrent();
+        if (action == null || !action.isSkippable())
+            return false;
+        iterator.advance();
+        if (iterator.isDone()) {
+            currentPlayer.getGodCard().endTurn(this);
+            iterator.reset();
         }
-
-        return board.getAdjacentTiles(tile).stream().anyMatch(t -> isValidMove(worker, t));
-    }
-    
-    /**
-     * Attempts to select a worker on a given tile.
-     * @param tile The tile from which a worker may be selected, if possible and legal.
-     * @return True if the selection was successful, otherwise false
-     */
-    public boolean trySelect(Tile tile) {
-        if (!isValidSelect(currentPlayer, tile)) return false;
-    
-        setSelectedWorker(tile.getWorker());
-        setPhase(Phase.MOVE);
         return true;
     }
     
-    /**
-     * Checks if a worker's move is valid based on game rules.
-     * @param worker The worker to move.
-     * @param to The destination tile.
-     * @return True if the move is valid, otherwise false.
-     */
-    public boolean isValidMove(Worker worker, Tile to) {
-        Tile from = worker.getTile();
-        return currentPlayer.ownsWorker(worker) && board.getAdjacentTiles(from).contains(to) && !to.isOccupied()
-                && !to.hasDome() && to.getTowerHeight() - from.getTowerHeight() <= 1;
-    }
-
-    /**
-     * Moves the selected worker to a new tile.
-     * @param to The destination tile.
-     * @return True if the move was successful, otherwise false.
-     */
-    public boolean tryMove(Tile to) {
-        if (selectedWorker == null || !isValidMove(selectedWorker, to))
-            return false;
-        currentPlayer.moveTo(selectedWorker, to);
-
-        setPhase(Phase.BUILD);
-
-        return true;
-    }
-    
-    /**
-     * Checks if a worker's build action is valid.
-     * @param worker The worker building.
-     * @param at The tile to build on.
-     * @return True if the build action is valid, otherwise false.
-     */
-    public boolean isValidBuild(Worker worker, Tile at) {
-        Tile from = worker.getTile();
-        return currentPlayer.ownsWorker(worker) && board.getAdjacentTiles(from).contains(at) && !at.isOccupied()
-                && !at.hasDome();
-    }
-    
-    /**
-     * Builds a tower at a specified tile.
-     * @param at The tile where the tower is built.
-     * @return True if the build was successful, otherwise false.
-     */
-    public boolean tryBuild(Tile at) {
-        if (selectedWorker == null || !isValidBuild(selectedWorker, at))
-            return false;
-
-        currentPlayer.buildAt(selectedWorker, at);
-        setSelectedWorker(null);
-        nextTurn();
-        setPhase(Phase.SELECT);
-
-        return true;
-    }
-
     /**
      * Ends the current player's turn and switches to the next player.
      */
     public void nextTurn() {
+        setSelectedWorker(null);
         playersQueue.add(playersQueue.poll());
         this.currentPlayer = playersQueue.peek();
     }
@@ -275,7 +234,7 @@ public class Game {
      * @return True if the worker reached level 3, otherwise false.
      */
     public boolean checkWinCondition(Worker worker) {
-        return worker.isOnWinningTile(WINNING_HEIGHT);
+        return currentPlayer.getGodCard().checkWinCondition(worker, this);
     }
 
     /**
@@ -288,7 +247,7 @@ public class Game {
         setPhase(Phase.GAME_OVER);
     }
 
-    private Player getWorkerOwner(Worker worker) {
+    public Player getWorkerOwner(Worker worker) {
         for (Player player : playersQueue) {
             if (player.ownsWorker(worker)) {
                 return player;
@@ -296,63 +255,33 @@ public class Game {
         }
         return null;
     }
-    
-    /**
-     * @return The game state in JSON format.
-     */
-    public JSONObject toJSON() {
-        JSONObject gameJson = new JSONObject();
-        gameJson.put("currentPlayer", getCurrentPlayer().getID());
-        gameJson.put("phase", getPhase().toString().toLowerCase());
-        gameJson.put("winner", (isGameWon()) ? winner.getID() : JSONObject.NULL);
 
-        JSONArray boardJson = new JSONArray();
-        for (int y = 0; y < board.getHeight(); y++) {
-            JSONArray row = new JSONArray();
-            for (int x = 0; x < board.getWidth(); x++) {
-                Tile tile = board.getTileAt(new Position(x, y));
-                JSONObject tileJson = new JSONObject();
-
-                tileJson.put("x", x);
-                tileJson.put("y", y);
-                tileJson.put("height", tile.getTowerHeight());
-                tileJson.put("hasDome", tile.hasDome());
-
-                Worker worker = tile.getWorker();
-                if (worker != null) {
-                    Player owner = getWorkerOwner(worker);
-                    tileJson.put("worker", owner.getID());
-                } else {
-                    tileJson.put("worker", JSONObject.NULL);
-                }
-
-                if (phase == Phase.SPAWN && isValidSpawn(currentPlayer, tile)) {
-                    tileJson.put("isValidSpawn", true);
-                } else if (phase == Phase.SELECT) {
-                    if (isValidSelect(currentPlayer, tile)) {
-                        tileJson.put("isValidSelect", true);
-                    }
-                } else if (phase == Phase.MOVE) {
-                    if (selectedWorker != null && isValidMove(selectedWorker, tile)) {
-                        tileJson.put("isValidMove", true);
-                    }
-                } else if (phase == Phase.BUILD && selectedWorker != null) {
-                    if (isValidBuild(selectedWorker, tile)) {
-                        tileJson.put("isValidBuild", true);
-                    }
-                }
-
-                if (isGameWon() && selectedWorker != null && selectedWorker.getTile().equals(tile)) {
-                    tileJson.put("isWinningTile", true);
-                }
-
-                row.put(tileJson);
-            }
-            boardJson.put(row);
+    public Player getPlayer(int id) {
+        for (Player p : playersQueue) {
+            if (p.getID() == id)
+                return p;
         }
+        throw new IllegalArgumentException("Player not found with id: " + id);
+    }
+    
+    public int getWinningHeight() {
+        return WINNING_HEIGHT;
+    }
 
-        gameJson.put("board", boardJson);
-        
-        return gameJson;
+    public int getMaxClimbHeight() {
+        return MAX_CLIMB_HEIGHT;
+    }
+
+    public boolean areAdjacent(Tile a, Tile b) {
+        return board.areAdjacent(a, b);
+    }
+
+    private GodCard getGodCard(Player player) {
+        return player.getGodCard() != null ? player.getGodCard() : new DefaultLogicCard();
+    }
+
+   public TurnAction getCurrentAction() {
+        if (phase != Phase.TURN_ACTION) return null;
+        return getGodCard(currentPlayer).getTurnIterator().getCurrent();
     }
 }
