@@ -24,11 +24,5 @@ jobs:
       - name: Run Checkstyle
         run: mvn checkstyle:check
 
-      - name: Compile
-        run: mvn compile
-
-      - name: Run Tests
-        run: mvn test
-
-      - name: Verify (Optional extra checks)
-        run: mvn verify
+      - name: Build and Test
+        run: mvn -B verify --file pom.xml
