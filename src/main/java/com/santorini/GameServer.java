@@ -16,7 +16,6 @@ import com.santorini.godcards.ArtemisCard;
 import com.santorini.godcards.AtlasCard;
 import com.santorini.godcards.DemeterCard;
 import com.santorini.godcards.HephaestusCard;
-import com.santorini.godcards.HermesCard;
 import com.santorini.godcards.MinotaurCard;
 import com.santorini.godcards.PanCard;
 import com.santorini.godcards.PrometheusCard;
