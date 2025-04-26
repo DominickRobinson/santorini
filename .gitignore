@@ -1,2 +1,10 @@
 target/
 .vscode/
+start-all.sh
+stop-all.sh
+frontend.log
+backend.log
+
+
+src/main/java/com/santorini/godcards/AthenaCard.java
+src/main/java/com/santorini/godcards/HermesCard.java
