@@ -133,7 +133,7 @@ public class GameServer extends NanoHTTPD {
         Map.entry("atlas", AtlasCard::new),
         Map.entry("demeter", DemeterCard::new),
         Map.entry("hephaestus", HephaestusCard::new),
-        Map.entry("hermes", HermesCard::new),
+        // Map.entry("hermes", HermesCard::new),
         Map.entry("minotaur", MinotaurCard::new),
         Map.entry("pan", PanCard::new),
         Map.entry("prometheus", PrometheusCard::new)
