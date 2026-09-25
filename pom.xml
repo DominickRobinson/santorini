@@ -82,4 +82,28 @@
     </build>
 
 
+<profiles>
+  <profile>
+    <id>browser</id>
+    <dependencies>
+      <dependency><groupId>org.teavm</groupId><artifactId>teavm-classlib</artifactId><version>0.15.0</version></dependency>
+      <dependency><groupId>org.teavm</groupId><artifactId>teavm-jso</artifactId><version>0.15.0</version></dependency>
+    </dependencies>
+    <build><plugins>
+      <plugin><groupId>org.codehaus.mojo</groupId><artifactId>build-helper-maven-plugin</artifactId><version>3.6.1</version>
+        <executions><execution><id>browser-source</id><phase>generate-sources</phase><goals><goal>add-source</goal></goals>
+        <configuration><sources><source>src/browser/java</source></sources></configuration></execution></executions>
+      </plugin>
+      <plugin><groupId>org.teavm</groupId><artifactId>teavm-maven-plugin</artifactId><version>0.15.0</version>
+        <executions><execution><goals><goal>compile</goal></goals><phase>process-classes</phase></execution></executions>
+        <configuration>
+          <mainClass>com.santorini.browser.BrowserGame</mainClass>
+          <targetDirectory>${project.basedir}/santorini-ui/public/engine</targetDirectory>
+          <targetFileName>santorini.js</targetFileName><jsModuleType>UMD</jsModuleType>
+          <sourceMapsGenerated>false</sourceMapsGenerated><minifying>true</minifying>
+        </configuration>
+      </plugin>
+    </plugins></build>
+  </profile>
+</profiles>
 </project>

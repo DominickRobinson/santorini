@@ -8,3 +8,5 @@ backend.log
 
 src/main/java/com/santorini/godcards/AthenaCard.java
 src/main/java/com/santorini/godcards/HermesCard.java
+!/santorini-ui/public/
+/santorini-ui/public/engine/

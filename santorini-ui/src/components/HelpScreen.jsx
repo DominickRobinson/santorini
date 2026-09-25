@@ -61,19 +61,19 @@ function HelpScreen({ onClose }) {
         <h3>Icons</h3>
         <ul className="icons">
             <li>
-                <img src="/sprites/player1.svg" alt="Player 1" className="icon-sample" /> - Player 1
+                <img src={`${process.env.PUBLIC_URL}/sprites/player1.svg`} alt="Player 1" className="icon-sample" /> - Player 1
             </li>
             <li>
-                <img src="/sprites/worker1.svg" alt="Player 1's Worker" className="icon-sample" /> - Player 1's Worker
+                <img src={`${process.env.PUBLIC_URL}/sprites/worker1.svg`} alt="Player 1's Worker" className="icon-sample" /> - Player 1's Worker
             </li>
             <li>
-                <img src="/sprites/player2.svg" alt="Player 2" className="icon-sample" /> - Player 2
+                <img src={`${process.env.PUBLIC_URL}/sprites/player2.svg`} alt="Player 2" className="icon-sample" /> - Player 2
             </li>
             <li>
-                <img src="/sprites/worker2.svg" alt="Player 2's Worker" className="icon-sample" /> - Player 2's Worker
+                <img src={`${process.env.PUBLIC_URL}/sprites/worker2.svg`} alt="Player 2's Worker" className="icon-sample" /> - Player 2's Worker
             </li>
             <li>
-            <img src="/sprites/dome.svg" alt="Dome" className="icon-sample" /> - Dome
+            <img src={`${process.env.PUBLIC_URL}/sprites/dome.svg`} alt="Dome" className="icon-sample" /> - Dome
             </li>
         </ul>
 
@@ -81,7 +81,7 @@ function HelpScreen({ onClose }) {
         <ul className="icons">
           {Object.entries(GOD_CARDS).map(([key, desc]) => (
             <li>
-              <img src={`/sprites/godcards/${key}.svg`} alt={key} className="icon-sample"/>
+              <img src={`${process.env.PUBLIC_URL}/sprites/godcards/${key}.svg`} alt={key} className="icon-sample"/>
               <div>
                  - <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {desc}
               </div>

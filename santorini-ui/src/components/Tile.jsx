@@ -24,7 +24,7 @@ function Tile({ tile, onClick }) {
 
     const workerImage = worker ? (
         <img
-            src={`/sprites/worker${worker}.svg`}
+            src={`${process.env.PUBLIC_URL}/sprites/worker${worker}.svg`}
             alt={`Player ${worker}'s worker`}
             className="worker-sprite"
         />
@@ -32,7 +32,7 @@ function Tile({ tile, onClick }) {
 
     const domeImage = hasDome ? (
         <img
-            src="/sprites/dome.svg"
+            src={`${process.env.PUBLIC_URL}/sprites/dome.svg`}
             alt="Dome"
             className="dome-sprite"
         />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import gameApi from "../gameApi";
 import Board from "./Board";
 import HelpScreen from "./HelpScreen";
 import GameOverScreen from "./GameOverScreen";
@@ -10,31 +10,33 @@ import GodCard from "./GodCardIcon";
 function GameScreen({ useGodCards, selectedGodCards, onBackToMenu }) {
   const [gameState, setGameState] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchGameState = () => {
-    axios.get("http://localhost:8080/game-state")
+    gameApi.get("/game-state")
       .then(res => setGameState(res.data))
       .catch(err => console.error("Failed to fetch game state", err));
   };
 
   const startNewGame = () => {
+    setError(null);
     const config = {
       player1GodCard: selectedGodCards?.player1 || "none",
       player2GodCard: selectedGodCards?.player2 || "none",
     };
-    axios.post("http://localhost:8080/new-game", config)
+    gameApi.post("/new-game", config)
       .then(res => setGameState(res.data))
-      .catch(err => console.error("Failed to start new game", err));
+      .catch(err => setError(err.message));
   };
 
   const handleTileClick = (x, y) => {
-    axios.post("http://localhost:8080/tile-press", { x, y })
+    gameApi.post("/tile-press", { x, y })
       .then(fetchGameState)
       .catch(err => console.error("Tile press failed", err));
   };
 
   const handleSkip = () => {
-    axios.post("http://localhost:8080/skip")
+    gameApi.post("/skip")
       .then(fetchGameState)
       .catch(err => console.error("Skip failed", err));
   };
@@ -43,6 +45,14 @@ function GameScreen({ useGodCards, selectedGodCards, onBackToMenu }) {
     startNewGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (error) {
+    return <div className="loading-screen" role="alert">
+      <h2>{error}</h2>
+      <button onClick={() => window.location.reload()}>Reload Game</button>
+      <button onClick={onBackToMenu}>Back to Menu</button>
+    </div>;
+  }
 
   if (!gameState) {
     return (
@@ -76,7 +86,7 @@ function GameScreen({ useGodCards, selectedGodCards, onBackToMenu }) {
       <main className="main-content">
         <div className="side-panel left">
           <img
-            src="/sprites/player1.svg"
+            src={`${process.env.PUBLIC_URL}/sprites/player1.svg`}
             alt="Player 1"
             className={`portrait ${gameState.currentPlayer !== 1 ? "silhouetted" : ""}`}
           />
@@ -93,7 +103,7 @@ function GameScreen({ useGodCards, selectedGodCards, onBackToMenu }) {
 
         <div className="side-panel right">
           <img
-            src="/sprites/player2.svg"
+            src={`${process.env.PUBLIC_URL}/sprites/player2.svg`}
             alt="Player 2"
             className={`portrait ${gameState.currentPlayer !== 2 ? "silhouetted" : ""}`}
           />

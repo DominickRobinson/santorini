@@ -52,7 +52,7 @@ function GodCardSelectScreen({ onStartGameWithGodCards }) {
               className={cardClass}
               onClick={() => handleSelect(god)}
             >
-              <img src={`/sprites/godcards/${god}.svg`} alt={god} className="god-icon" />
+              <img src={`${process.env.PUBLIC_URL}/sprites/godcards/${god}.svg`} alt={god} className="god-icon" />
               <span className="god-name">{god.charAt(0).toUpperCase() + god.slice(1)}</span>
             </button>
           );
